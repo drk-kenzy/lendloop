@@ -112,9 +112,21 @@ a local anonymous deployment: `CONVEX_AGENT_MODE=anonymous npx convex dev`.
 
 1. Create a Clerk application and copy the publishable and secret keys into
    `.env.local`.
-2. In Clerk -> **JWT templates**, create a template named **`convex`** (use the
-   Convex preset).
-3. Copy its **Issuer** and set it on Convex:
+2. In Clerk, activate the **Convex integration** (Integrations -> Convex). On
+   older Clerk instances, create a JWT template named **`convex`** with the
+   Convex preset instead.
+3. In Clerk -> **Sessions -> Customize session token**, keep `aud` and add the
+   user's name and email, otherwise users show up as "Neighbor" with no email:
+
+```json
+{
+  "aud": "convex",
+  "email": "{{user.primary_email_address}}",
+  "name": "{{user.full_name}}"
+}
+```
+
+4. Copy the **Issuer** (Clerk Frontend API URL) and set it on Convex:
 
 ```bash
 npx convex env set CLERK_JWT_ISSUER_DOMAIN https://<your-instance>.clerk.accounts.dev
