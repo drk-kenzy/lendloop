@@ -1,0 +1,33 @@
+{
+  "name": "lendloop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Neighborhood tool-lending board: Next.js + Clerk + Convex + n8n",
+  "scripts": {
+    "dev": "next dev",
+    "dev:convex": "convex dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "n8n:up": "docker compose up -d",
+    "n8n:down": "docker compose down"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.39.8",
+    "convex": "^1.49.0",
+    "lucide-react": "^1.70.0",
+    "next": "^15.5.29",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "convex-test": "^0.0.67",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "id": "lendlpErrHandler1",
+  "name": "LendLoop - Error handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c3000000-0000-4000-8000-000000000001",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Failed runs are never silent: they surface here.\n// Production: replace the log with a Slack / Discord / email alert node.\nconst e = $input.first().json;\nconst workflow = e.workflow ? e.workflow.name : 'unknown workflow';\nconst node = e.execution && e.execution.lastNodeExecuted ? e.execution.lastNodeExecuted : 'unknown node';\nconst message = e.execution && e.execution.error ? e.execution.error.message : 'unknown error';\nconsole.error(`[LendLoop ALERT] \"${workflow}\" failed at \"${node}\": ${message}`);\nreturn [{ json: { workflow, node, message, executionId: e.execution ? e.execution.id : null } }];"
+      },
+      "id": "c3000000-0000-4000-8000-000000000002",
+      "name": "Raise alert (log)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0]
+    }
+  ],
+  "connections": {
+    "Error Trigger": { "main": [[{ "node": "Raise alert (log)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {}
+}

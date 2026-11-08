@@ -1,0 +1,36 @@
+# Local n8n for LendLoop.
+#   1. cp .env.example .env   (fill LENDLOOP_SHARED_SECRET, CONVEX_SITE_URL, N8N_ENCRYPTION_KEY)
+#   2. docker compose up -d
+#   3. open http://localhost:5678, create the owner account, then import the
+#      workflows (see README: `docker compose exec n8n n8n import:workflow ...`)
+services:
+  n8n:
+    # Pinned to the version the workflows were tested with.
+    image: docker.n8n.io/n8nio/n8n:${N8N_VERSION:-2.46.6}
+    restart: unless-stopped
+    ports:
+      # Bound to localhost only: the editor must not be exposed to the network.
+      - "127.0.0.1:5678:5678"
+    environment:
+      # Secrets come from the environment, never from workflow JSON.
+      - LENDLOOP_SHARED_SECRET=${LENDLOOP_SHARED_SECRET:?set LENDLOOP_SHARED_SECRET in .env}
+      - CONVEX_SITE_URL=${CONVEX_SITE_URL:?set CONVEX_SITE_URL in .env}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:?set N8N_ENCRYPTION_KEY in .env}
+      # Code nodes need `crypto` for HMAC and read the secret via $env.
+      - NODE_FUNCTION_ALLOW_BUILTIN=crypto
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - GENERIC_TIMEZONE=UTC
+      - TZ=UTC
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=336
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n/workflows:/workflows:ro
+    # Lets the container reach a Convex dev backend running on the host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  n8n_data:
